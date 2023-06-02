@@ -23,9 +23,9 @@ public class LoginServlet extends HttpServlet {
         String pwd = request.getParameter("pwd");
         String userID = getServletConfig().getInitParameter("user");
         String password = getServletConfig().getInitParameter("password");
-
+        boolean isValidPassword = Pattern.compile("(?=.*[A-Z])(?=.([^\\w\\d\\s:]))(?=.*[0-9])[\\S]{8,}").matcher(user).matches();
         boolean isValidUserName = Pattern.compile("^[A_Z][\\w\\d]{2,}").matcher(user).matches();
-        if (!isValidUserName) {
+        if (!isValidUserName || !isValidPassword) {
             RequestDispatcher requestDispatcher = getServletContext().getRequestDispatcher("/login.html");
             PrintWriter out = response.getWriter();
             out.println("<font color=red>UserName doesn't match regex</font>");
