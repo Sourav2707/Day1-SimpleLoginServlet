@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
         urlPatterns = {"/LoginServlet"},
         initParams = {
                 @WebInitParam(name = "user", value = "Sourav"),
-                @WebInitParam(name = "password", value = "123")
+                @WebInitParam(name = "password", value = "So@123456")
         }
 )
 public class LoginServlet extends HttpServlet {
@@ -23,16 +23,23 @@ public class LoginServlet extends HttpServlet {
         String pwd = request.getParameter("pwd");
         String userID = getServletConfig().getInitParameter("user");
         String password = getServletConfig().getInitParameter("password");
-        boolean isValidPassword = Pattern.compile("(?=.*[A-Z])(?=.([^\\w\\d\\s:]))(?=.*[0-9])[\\S]{8,}").matcher(user).matches();
-        boolean isValidUserName = Pattern.compile("^[A_Z][\\w\\d]{2,}").matcher(user).matches();
-        if (!isValidUserName || !isValidPassword) {
+        boolean isValidPassword = Pattern.compile("(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,}").matcher(pwd).matches();
+        boolean isValidUserName = Pattern.compile("^[A-Z][a-zA-Z]{2,}").matcher(user).matches();
+        if (!isValidUserName) {
             RequestDispatcher requestDispatcher = getServletContext().getRequestDispatcher("/login.html");
             PrintWriter out = response.getWriter();
             out.println("<font color=red>UserName doesn't match regex</font>");
             requestDispatcher.include(request, response);
-        } else if (user.equals(userID) && pwd.equals(password)) {
+        }
+        else if (!isValidPassword) {
+            RequestDispatcher requestDispatcher = getServletContext().getRequestDispatcher("/login.html");
+            PrintWriter out = response.getWriter();
+            out.println("<font color=red>Password doesn't match regex</font>");
+            requestDispatcher.include(request, response);
+        }
+        else if (user.equals(userID) && pwd.equals(password)) {
             request.setAttribute("user", user);
-            request.getRequestDispatcher("/LoginSuccess.html").forward(request, response);
+            request.getRequestDispatcher("/LoginSuccess.jsp").forward(request, response);
         } else {
             RequestDispatcher requestDispatcher = getServletContext().getRequestDispatcher("/login.html");
             PrintWriter out = response.getWriter();
